@@ -107,7 +107,7 @@ body {
         font-size: 12px;
         background: #ffffff;
         overflow-y: auto;
-        max-height: 620px;
+        max-height: 420px;
     }
 
 /* ===== CENTER ===== */
@@ -141,7 +141,7 @@ body {
     font-family: monospace;
     color: #111;
     overflow-y: auto;
-    max-height: 620px;
+    max-height: 420px;
 }
 
 /* ===== TIMING ===== */
@@ -169,7 +169,13 @@ code {
     white-space: pre;
 }
 
- 
+    /* ===== COD C++ (ALB, FARA VERDE) ===== */
+    pre:not(#output),
+    pre:not(#output) code,
+    code,
+    code * {
+        color: #ffffff !important;
+    }
 
 /* ===== STIL COD ===== */
 pre {
