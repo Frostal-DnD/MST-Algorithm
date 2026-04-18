@@ -169,13 +169,7 @@ code {
     white-space: pre;
 }
 
-    /* ===== COD C++ (ALB, FARA VERDE) ===== */
-    pre,
-    pre code,
-    code,
-    code * {
-        color: #ffffff !important;
-    }
+ 
 
 /* ===== STIL COD ===== */
 pre {
