@@ -214,16 +214,11 @@ async function removeNonMSTEdges() {
 
     edges.forEach(e => {
         if (!e.hasClass("edge-mst")) {
-            e.animate({ style: { opacity: 0 } }, { duration: 400 });
+            e.animate({ style: { opacity: 0 } }, { duration: 600 });
         }
     });
 
-    await sleep(450);
-
-    edges.forEach(e => {
-        if (!e.hasClass("edge-mst")) e.remove();
-    });
-
+    await sleep(650);
     // Nodurile raman exact pe pozitiile lor — fara relayout
 }
 
