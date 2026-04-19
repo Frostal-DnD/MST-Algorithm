@@ -139,7 +139,7 @@ body {
     padding: 10px;
     font-size: 12px;
     font-family: monospace;
-    color: #111;
+    color: #333;
     overflow-y: auto;
     max-height: 620px;
 }
@@ -169,13 +169,7 @@ code {
     white-space: pre;
 }
 
-    /* ===== COD C++ (ALB, FARA VERDE) ===== */
-    pre,
-    pre code,
-    code,
-    code * {
-        color: #ffffff !important;
-    }
+
 
 /* ===== STIL COD ===== */
 pre {
