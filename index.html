@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <title>MST - Prim & Kruskal</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/cytoscape/dist/cytoscape.min.js"></script>
+    <link rel="icon" type="image/png" href="img.png">
+    <style>
+        /* Popup styles */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .popup-content {
+            background: #111;
+            color: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            width: 70%;
+        }
+
+            .popup-content pre {
+                background: #000;
+                padding: 15px;
+                overflow-x: auto;
+            }
+
+            .popup-content button {
+                margin-top: 10px;
+                margin-right: 10px;
+                padding: 8px 14px;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+            }
+    </style>
+</head>
+
+<body>
+
+    <!-- TOP BAR -->
+    <div id="top-bar">
+        <button class="top-btn" onclick="openPopup('kruskal')">💻 Cod Kruskal</button>
+        <button class="top-btn" onclick="runKruskal()">▶ Rulează Kruskal</button>
+        <button class="top-btn" onclick="runPrim()">▶ Rulează Prim</button>
+        <button class="top-btn" onclick="openPopup('prim')">💻 Cod Prim</button>
+    </div>
+
+    <div id="preset-bar">
+        <button onclick="loadPreset(1)">Graf 1</button>
+        <button onclick="loadPreset(2)">Graf 2</button>
+        <button onclick="loadPreset(3)">Graf 3</button>
+        <button onclick="loadPreset(4)">Graf 4</button>
+        <button onclick="loadPreset(5)">Graf 5</button>
+        <button onclick="loadPreset(6)">Graf 6</button>
+    </div>
+
+    <div id="main">
+
+        <!-- LEFT -->
+        <div id="panel-left">
+            <h3>Introducem graful</h3>
+            <textarea id="inputGraph" rows="14"></textarea>
+        </div>
+
+        <!-- CENTER -->
+        <div id="panel-center">
+            <div id="cy-wrapper">
+                <div id="cy"></div>
+            </div>
+        </div>
+
+        <!-- RIGHT -->
+        <div id="panel-right">
+            <h3>Rezultat</h3>
+            <pre id="output">—</pre>
+        </div>
+
+    </div>
+
+    <!-- POPUP -->
+    <div id="popup" class="popup">
+        <div class="popup-content">
+            <h3>Cod C++</h3>
+            <pre id="code"></pre>
+            <button onclick="copyCode()">Copy</button>
+            <button onclick="closePopup()">Close</button>
+        </div>
+    </div>
+
+    <script>
+        const kruskalCode = `#include <iostream>
+#include <string>
+using namespace std;
+
+struct Nod {
+    string Root, Sub;
+    float KG = 0;
+};
+
+void StraightSelection(int n, Nod v[1000]) {
+    Nod temp;
+    for (int i = 0; i < n - 1; i++) {
+        int k = i;
+        for (int j = i + 1; j < n; j++) {
+            if (v[j].KG < v[k].KG) k = j;
+        }
+
+        if (k != i) {
+            temp = v[i];
+            v[i] = v[k];
+            v[k] = temp;
+        }
+    }
+}
+
+int getIndex(string arr[], int count, const string& key) {
+    for (int i = 0; i < count; i++) {
+        if (arr[i] == key) return i;
+    }
+    return -1;
+}
+
+int FindParent(int parent[], int x) {
+    if (parent[x] == x) return x;
+    parent[x] = FindParent(parent, parent[x]);
+    return parent[x];
+}
+
+int main()
+{
+    int n;
+    Nod Graph[1000], Krus[1000];
+    string Stack[50];
+    cout << "Kruskal's Algorithm\n";
+    // read number of edges
+    do {
+        cout << "Cite muchii are graful. MAX=1000\n";
+        cin >> n;
+        if (n > 1000) {
+            cout << "Ati introdus un numar prea mare de muchii !\n";
+        }
+    } while (n > 1000 || n <= 0);
+
+  
+        cout << "--------------------------------------------------------------\n";
+        cout << "-   Introduceti datele despre muchii dupa urmatorul model    -\n";
+        cout << "--------------------------------------------------------------\n";
+        cout << "|  Extrema Stinga  |  Extrema Dreapta  |  Greutatea Muchiei  |\n";
+        cout << "--------------------------------------------------------------\n";
+
+    for (int i = 0; i < n; i++) {
+        cout << i + 1 << " : "; 
+        cin >> Graph[i].Root >> Graph[i].Sub >> Graph[i].KG;    
+    }
+
+
+
+
+    // sort edges by weight
+    StraightSelection(n, Graph);
+
+    // build list of unique nodes in Stack
+    int countStack = 0;
+    for (int i = 0; i < n; i++) {
+        if (getIndex(Stack, countStack, Graph[i].Root) == -1) {
+            Stack[countStack++] = Graph[i].Root;
+        }
+        if (getIndex(Stack, countStack, Graph[i].Sub) == -1) {
+            Stack[countStack++] = Graph[i].Sub;
+        }
+    }
+
+    // initialize union-find parent
+    int parent[50];
+    for (int i = 0; i < countStack; i++) parent[i] = i;
+
+    // Kruskal: pick edges in increasing order if they connect different components
+    int k = 0;
+    for (int i = 0; i < n && k < countStack - 1; i++) {
+        int u = getIndex(Stack, countStack, Graph[i].Root);
+        int v = getIndex(Stack, countStack, Graph[i].Sub);
+        if (u == -1 || v == -1) continue; // safety
+        int pu = FindParent(parent, u);
+        int pv = FindParent(parent, v);
+        if (pu != pv) {
+            Krus[k++] = Graph[i];
+            parent[pu] = pv; // union
+        }
+    }
+
+    cout << "\n\n Afisarea MST (Kruskal) \n\n";
+    cout << "-------------------------------------------\n";
+    cout << "|    Stinga   |   Dreapta   |  Greutatea  |\n";
+    cout << "-------------------------------------------\n";
+    for (int i = 0; i < k; i++) {
+        cout << "|       " << Krus[i].Root << "     |       " << Krus[i].Sub << "     |      " << Krus[i].KG << "      |" << endl;
+    }
+    cout << "-------------------------------------------\n";
+    float total = 0;
+    for (int i = 0; i < k; i++) total += Krus[i].KG;
+    cout << "Cost total MST = " << total << endl;
+
+
+    return 0;
+}`;
+
+        const primCode = `#include <iostream>
+#include <string>
+using namespace std;
+
+struct Nod {
+    string Root, Sub;
+    float KG = 0;
+};
+
+int getIndex(string arr[], int count, const string& key) {
+    for (int i = 0; i < count; i++) {
+        if (arr[i] == key) return i;
+    }
+    return -1;
+}
+
+int main()
+{
+    int n;
+    Nod Graph[1000], Prim[1000];
+    string Stack[50];
+
+    cout << "Prim's Algorithm\n";
+
+    // citire numar muchii
+    do {
+        cout << "Cate muchii are graful. MAX=1000\n";
+        cin >> n;
+    } while (n > 1000 || n <= 0);
+
+    cout << "--------------------------------------------------------------\n";
+    cout << "-   Introduceti datele despre muchii dupa urmatorul model    -\n";
+    cout << "--------------------------------------------------------------\n";
+    cout << "|  Extrema Stinga  |  Extrema Dreapta  |  Greutatea Muchiei  |\n";
+    cout << "--------------------------------------------------------------\n";
+
+    for (int i = 0; i < n; i++) {
+        cout << i + 1 << " : ";
+        cin >> Graph[i].Root >> Graph[i].Sub >> Graph[i].KG;
+    }
+
+    // construim lista de noduri
+    int countStack = 0;
+    for (int i = 0; i < n; i++) {
+        if (getIndex(Stack, countStack, Graph[i].Root) == -1)
+            Stack[countStack++] = Graph[i].Root;
+
+        if (getIndex(Stack, countStack, Graph[i].Sub) == -1)
+            Stack[countStack++] = Graph[i].Sub;
+    }
+
+    // vector vizitat
+    bool visited[50] = { 0 };
+
+    // pornim din primul nod
+    visited[0] = true;
+
+    int k = 0;
+
+    // Prim
+    while (k < countStack - 1) {
+        float min = 999999;
+        int index = -1;
+
+        for (int i = 0; i < n; i++) {
+            int u = getIndex(Stack, countStack, Graph[i].Root);
+            int v = getIndex(Stack, countStack, Graph[i].Sub);
+
+            // una vizitata, cealalta nu
+            if ((visited[u] && !visited[v]) || (!visited[u] && visited[v])) {
+                if (Graph[i].KG < min) {
+                    min = Graph[i].KG;
+                    index = i;
+                }
+            }
+        }
+
+        if (index == -1) break; // graf neconex
+
+        Prim[k++] = Graph[index];
+
+        int u = getIndex(Stack, countStack, Graph[index].Root);
+        int v = getIndex(Stack, countStack, Graph[index].Sub);
+
+        visited[u] = true;
+        visited[v] = true;
+    }
+
+    // afisare
+    cout << "\n\n Afisarea MST (Prim)\n\n";
+    cout << "-------------------------------------------\n";
+    cout << "|    Stinga   |   Dreapta   |  Greutatea  |\n";
+    cout << "-------------------------------------------\n";
+
+    float total = 0;
+
+    for (int i = 0; i < k; i++) {
+        cout << "|      " << Prim[i].Root
+            << "      |      " << Prim[i].Sub
+            << "      |      " << Prim[i].KG << "      |\n";
+
+        total += Prim[i].KG;
+    }
+
+    cout << "-------------------------------------------\n";
+    cout << "Cost total MST = " << total << endl;
+
+    return 0;
+}`;
+
+        function openPopup(type) {
+        const popup = document.getElementById('popup');
+        const code = document.getElementById('code');
+
+        if(type === 'kruskal') code.textContent = kruskalCode;
+        else code.textContent = primCode;
+
+        popup.style.display = 'flex';
+        }
+
+        function closePopup() {
+        document.getElementById('popup').style.display = 'none';
+        }
+
+        function copyCode() {
+        const text = document.getElementById('code').innerText;
+        navigator.clipboard.writeText(text);
+        alert('Copied!');
+        }
+    </script>
+
+    <script src="script.js"></script>
+</body>
+</html>
