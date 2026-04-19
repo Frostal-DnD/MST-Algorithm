@@ -1,4 +1,3 @@
-
 // ================= INIT =================
 const cy = cytoscape({
     container: document.getElementById('cy'),
