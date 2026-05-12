@@ -363,94 +363,78 @@ const presets = {
 6 7 9`,
 
   2: `1 2 4
-  1 8 8
-  2 8 11
-  2 3 8
-  8 9 7
-  8 7 1
-  3 9 2
-  7 9 6
-  3 4 7
-  3 6 4
-  7 6 2
-  4 6 14
-  4 5 9
-  6 5 10`,
+1 8 8
+2 8 11
+2 3 8
+8 9 7
+8 7 1
+3 9 2
+7 9 6
+3 4 7
+3 6 4
+7 6 2
+4 6 14
+4 5 9
+6 5 10`,
 
   3: `1 2 3
-  1 6 6
-  1 5 4
-  2 5 3
-  2 6 2
-  2 4 1
-  4 5 3
-  4 6 5
-  4 7 4
-  4 8 2
-  8 7 1
-  8 3 2
-  7 6 5
-  7 3 3
-  3 6 4
-  5 6 1`,
+1 6 6
+1 5 4
+2 5 3
+2 6 2
+2 4 1
+4 5 3
+4 6 5
+4 7 4
+4 8 2
+8 7 1
+8 3 2
+7 6 5
+7 3 3
+3 6 4
+5 6 1`,
 
   4: `1 2 1
-  1 4 4
-  2 4 6
-  2 5 4
-  2 3 2
-  3 5 5
-  3 6 6
-  4 5 3
-  4 7 4
-  5 6 8
-  5 7 7
-  6 7 3`,
+1 4 4
+2 4 6
+2 5 4
+2 3 2
+3 5 5
+3 6 6
+4 5 3
+4 7 4
+5 6 8
+5 7 7
+6 7 3`,
 
   5: `1 2 3
-  1 5 5
-  1 6 9
-  2 6 3
-  2 5 1
-  2 3 3
-  3 5 2
-  3 4 6
-  6 5 1
-  5 4 7`,
+1 5 5
+1 6 9
+2 6 3
+2 5 1
+2 3 3
+3 5 2
+3 4 6
+6 5 1
+5 4 7`,
 
   6: `1 2 9
-  1 3 1
-  1 4 3
-  1 7 9
-  2 5 4
-  3 5 2
-  3 6 5
-  5 6 1
-  6 7 1
-  6 8 4
-  4 7 5
-  4 8 1
-  7 8 2`
+1 3 1
+1 4 3
+1 7 9
+2 5 4
+3 5 2
+3 6 5
+5 6 1
+6 7 1
+6 8 4
+4 7 5
+4 8 1
+7 8 2`
 };
 
 function loadPreset(n) {
-  document.getElementById("inputGraph").value = presets[n];
-  drawGraph(); // dacă ai funcția asta
+  document.getElementById("inputGraph").value = presets[n].trim();
+  const data = parseInput();
+  if (data) drawGraph(data.nodes, data.edges);
 }
-
-// mstEdges = lista muchiilor din MST
-cy.edges().forEach(edge => {
-  const u = edge.data('source');
-  const v = edge.data('target');
-
-  const inMST = mstEdges.some(e =>
-    (e.u == u && e.v == v) || (e.u == v && e.v == u)
-  );
-
-  if (!inMST) {
-    edge.style('opacity', 0.1); // sau 0 dacă vrei să dispară complet
-  } else {
-    edge.style('line-color', 'green');
-    edge.style('width', 4);
-  }
-});
