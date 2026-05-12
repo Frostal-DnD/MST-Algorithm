@@ -288,7 +288,7 @@ async function runKruskal() {
 
     const t1 = performance.now();
 
-    output += `\nGreutate totală MST: ${totalWeight}`;
+    output += `\nPonderea totală MST: ${totalWeight}`;
     document.getElementById("output").textContent = output;
     showTiming(Math.round(t1 - t0));
 
@@ -342,7 +342,7 @@ async function runPrim() {
 
     const t1 = performance.now();
 
-    output += `\nGreutate totală MST: ${totalWeight}`;
+    output += `\nPonderea totală MST: ${totalWeight}`;
     document.getElementById("output").textContent = output;
     showTiming(Math.round(t1 - t0));
 
